@@ -1,0 +1,115 @@
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Scanner;
+
+// Definition for a binary tree node
+class Node {
+    int data;
+    Node left, right;
+
+    public Node(int data) {
+        this.data = data;
+        left = right = null;
+    }
+}
+
+class Solution {
+    Node prev = null;  
+
+    // Function to convert Binary Tree to Doubly Linked List (DLL)
+    Node bToDLL(Node root) {
+        // Base case
+        if (root == null) {
+            return null;
+        }
+
+        Node head = null;
+
+        head = bToDLL(root.left);
+
+ 
+        if (prev == null) {
+            head = root;
+        } else {
+            prev.right = root;
+            root.left = prev;
+        }
+
+        prev = root;
+
+      
+        bToDLL(root.right);
+
+        return head;
+    }
+    void printList(Node head) {
+        Node temp = head;
+        while (temp != null) {
+            System.out.print(temp.data + " ");
+            temp = temp.right;
+        }
+    }
+
+    
+    Node buildTree(int[] inputs) {
+        if (inputs.length == 0) {
+            return null;
+        }
+
+        Node root = new Node(inputs[0]); 
+        Queue<Node> queue = new LinkedList<>(); 
+        queue.add(root);
+
+        int i = 1;
+        while (i < inputs.length) {
+            Node current = queue.poll();
+
+            // Insert left child
+            if (i < inputs.length) {
+                if (inputs[i] != -1) {  
+                    current.left = new Node(inputs[i]);
+                    queue.add(current.left);
+                }
+                i++;
+            }
+
+            // Insert right child
+            if (i < inputs.length) {
+                if (inputs[i] != -1) {
+                    current.right = new Node(inputs[i]);
+                    queue.add(current.right);
+                }
+                i++;
+            }
+        }
+
+        return root;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Solution tree = new Solution();
+
+  
+        System.out.println("Enter number of nodes:");
+        int n = sc.nextInt();
+        
+       
+        int[] inputs = new int[n];
+        System.out.println("Enter node values (-1 for null):");
+        for (int i = 0; i < n; i++) {
+            inputs[i] = sc.nextInt();
+        }
+
+        Node root = tree.buildTree(inputs);
+
+        // Convert binary tree to DLL
+        Node head = tree.bToDLL(root);
+
+        // Print the DLL
+        System.out.println("Doubly Linked List:");
+        tree.printList(head);
+
+        sc.close();
+    }
+}
